@@ -5,6 +5,10 @@
 .sass-cache
 data
 
+# raw data
+*.csv
+*.xls
+
 # Logs
 logs
 *.log
