@@ -20,10 +20,10 @@
     "event-stream": "^3.3.4",
     "mongoose": "^4.13.4",
     "restify": "^6.3.4",
-    "restify-cors-middleware": "^1.0.1",
-    "stream-transform": "^1.0.0"
+    "restify-cors-middleware": "^1.0.1"
   },
   "devDependencies": {
-    "commander": "^2.11.0"
+    "commander": "^2.11.0",
+    "stream-transform": "^1.0.0"
   }
 }
