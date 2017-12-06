@@ -3,6 +3,18 @@ const bluebird = require('bluebird');
 const Schema   = mongoose.Schema;
 mongoose.Promise = bluebird;
 
+var DataYearSchema = new Schema({
+	year: Number,
+	count:{
+		type: Number,
+		defualt: 0
+	},
+	total:{
+		type: Number,
+		defualt: 0
+	}
+})
+
 var SegmentSchema = new Schema({
 	segmentType: {
 		type: String,
@@ -16,21 +28,19 @@ var SegmentSchema = new Schema({
                	'Families',
                 'Legal Data',
                 'Legal Status' ],
-        default: 'Biblio'
-	}
-	count: {
-		type: Number,
-		default: 0
-	}
-})
-
-var DataYearSchema = new Schema({
-	year: Number,
-	contentSegments: [SegmentSchema]
+        default:'Biblio'
+	},
+	dataYears: [DataYearSchema],
+	coverageStart: Number,
+	goodCoverageStart:Number
 })
 
 var DataSetSchema = new Schema({
-	setType: {
+	countryCode:{
+		type:String,
+		required: true
+	},
+	dataSetType: {
 		type: String,
 		default: 'Patents',
 		enum: ['Patents','Utility Models', 'Designs']
@@ -40,14 +50,7 @@ var DataSetSchema = new Schema({
 		enum: ['Applications','Grants','Registrations'],
 		default: 'Grants'
 	},
-	dataSets: [
-		{
-			type: mongoose.Schema.Types.ObjectId,
-            ref: 'DataSets'
-		}
-	],
-	coverageStarts: Number,
-	goodCoverageStarts: Number
+	contentSegments: [SegmentSchema],
 })
 
 
