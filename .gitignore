@@ -8,6 +8,7 @@ data
 # raw data
 *.csv
 *.xls
+*.pdf
 
 # Logs
 logs

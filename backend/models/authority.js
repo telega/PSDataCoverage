@@ -26,7 +26,7 @@ var AuthoritySchema = new Schema({
 	dataSets: [
 		{
 			type: mongoose.Schema.Types.ObjectId,
-            ref: 'DataSets'
+            ref: 'DataSet'
 		}
 	]
 })

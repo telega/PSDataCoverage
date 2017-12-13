@@ -392,6 +392,73 @@ const processCountries = (countryFile)=>{
 		})
 }
 
+// const updateSegmentYears = () =>{
+// 	console.log(colors.green('updating segment years...'));
+
+// 	DataSet.find({'countryCode': 'BX'})
+// 		.cursor()
+// 		.eachAsync((ds)=>{
+
+// 			ds.contentSegments.forEach((cs)=>{
+// 				let coverageStart = cs.coverageStart;
+// 				let goodCoverageStart =  0;
+
+// 				cs.dataYears.forEach((dy)=>{
+// 					if(dy.year < coverageStart){
+// 						console.log(colors.blue('coverage year ' + dy.year + ' is earlier than ' + coverageStart ));
+// 						coverageStart = dy.year;
+// 					} 
+
+// 					console.log(dy.count/dy.total)
+
+// 					if( (dy.count/dy.total >= 0.6) && ( (dy.year < goodCoverageStart) || (goodCoverageStart == 0))){
+// 						console.log(colors.cyan('good coverage year was ' + goodCoverageStart + ' is now ' + dy.year))
+// 						goodCoverageStart = dy.year;
+// 					}
+// 				})
+
+// 			});
+
+// 			return ds.save();
+
+// 		})
+// 		.then(()=>{
+// 			console.log(colors.red('Done'));
+// 		})
+// 		.catch((err)=>{
+// 			console.log(err);
+// 		})
+// }
+
+
+const coverageStart = (ac,cv) =>{
+	if(cv.count>0){
+		if(ac<cv.year){
+  		return ac;
+  	} else {
+  		return cv.year;
+  	}
+   } else {
+   	return ac;
+   }
+}
+
+
+const goodCoverageStart = (ac,cv) =>{
+	let percentage = cv.count/cv.total;
+
+	if(percentage>0.6){
+		if(ac<cv.year){
+  		return ac;
+  	} else {
+  		return cv.year;
+  	}
+   } else {
+   	return ac;
+   }
+
+}
+
 const updateSegmentYears = () =>{
 	console.log(colors.green('updating segment years...'));
 
@@ -400,27 +467,17 @@ const updateSegmentYears = () =>{
 		.eachAsync((ds)=>{
 
 			ds.contentSegments.forEach((cs)=>{
-				let coverageStart = cs.coverageStart;
-				let goodCoverageStart =  0;
-
-				cs.dataYears.forEach((dy)=>{
-					if(dy.year < coverageStart){
-						console.log(colors.blue('coverage year ' + dy.year + ' is earlier than ' + coverageStart ));
-						coverageStart = dy.year;
-					} 
-
-					if( (dy.count/dy.total >= 0.6) && ( (dy.year < goodCoverageStart) || (goodCoverageStart == 0))){
-						console.log(colors.cyan('good coverage year was ' + goodCoverageStart + ' is now ' + dy.year))
-						goodCoverageStart = dy.year;
-					}
-				})
-
+				
+				let coverageStartYear = cs.dataYears.reduce(coverageStart,9999);
+				let goodCoverageStartYear = cs.dataYears.reduce(goodCoverageStart,9999);
+				cs.coverageStart = coverageStartYear !== 9999 ? coverageStartYear : null ;
+				cs.goodCoverageStart = goodCoverageStartYear !== 9999 ? coverageStartYear : null ;
 			});
 
 			return ds.save();
 
 		})
-		.then(()=>{
+		.then((ds)=>{
 			console.log(colors.red('Done'));
 		})
 		.catch((err)=>{
@@ -428,7 +485,20 @@ const updateSegmentYears = () =>{
 		})
 }
 
-updateAuthorities = () =>{
+
+
+const addDataSetToAuthority = (ds,authority) =>{
+
+	if(authority.dataSets.indexOf(ds._id) == -1){
+		console.log(colors.green('Adding ' + ds.dataSetType+ ' '+ ds.pubType +  ' information to ' + authority.shortName));
+		authority.dataSets.push(ds._id);
+	} else {
+		console.log(colors.blue('Data Set' + ds.dataSetType+ ' '+ ds.pubType + ' already Exists for' + authority.shortName));
+	}
+	return authority.save()
+}
+
+const updateAuthorities = () =>{
 	console.log(colors.green('updating Authorities...'));
 
 	DataSet.find({})
@@ -436,18 +506,19 @@ updateAuthorities = () =>{
 		.eachAsync((ds)=>{
 
 				// cf process_companies lines 29-56
-			Authority.findOne({'code': ds.countryCode }).exec()
+			return Authority.findOne({'code': ds.countryCode }).exec()
 				.then((authority)=>{
 					if(authority){
-					console.log(authority.shortName)
+
+						addDataSetToAuthority(ds,authority);
+					
 					} else{
-						console.log(colors.red(ds.countryCode))
+						return console.log(colors.red('no matching country code: ' + ds.countryCode))
 					}
 				
 				})
 				.catch((err)=>{console.log(err)});
 				
-
 		})
 		.then(()=>{
 			console.log(colors.red('Done'));
@@ -455,7 +526,6 @@ updateAuthorities = () =>{
 		.catch((err)=>{
 			console.log(err);
 		})
-
 }
 
 program
