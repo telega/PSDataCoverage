@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+//import logo from './logo.svg';
 import './App.css';
 import DataCoverageWidget from './components/DataCoverageWidget'
 
@@ -15,6 +15,7 @@ class App extends Component {
         <div className="container">
             <DataCoverageWidget />
         </div>
+        
       </div>
     );
   }

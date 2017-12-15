@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 
 const findSegmentByType = (segmentType)=>{
 	return (element)=>{
-		return element.segmentType == segmentType;
+		return element.segmentType === segmentType;
 	}
 }
 
 const findSegmentByHeading = (heading) => {
 	return (element)=>{
-		return element.heading == heading;
+		return element.heading === heading;
 	}
 }
 

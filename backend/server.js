@@ -16,6 +16,7 @@ const cors = corsMiddleware({
 
 var dbUrl;
 
+
 if(process.env.NODE_ENV !=='test'){
 	dbUrl =  process.env.DB_URL;
 } else {
@@ -42,51 +43,38 @@ const getBase64String = (path) => {
  };
 
 const generatePDF = (html, fileName) =>{
+
+	let d = new Date;
  
     return new Promise((resolve, reject) => {
     	pdf.create(html, {
       		format: 'A4',
       		orientation: 'landscape',
       		border: { top: '0.5cm', right: '0.5cm', bottom: '0.5cm', left: '0.5cm' },
+      		base:'file://' + __dirname + '/images/',
+      		"header": {
+  			  "height": "8mm",
+  			  "contents": {
+  			    first: '<span style="color: #444; font-size:8px; font-family: sans-serif;"> Data Coverage | Generated on '+d.getDate()+'-'+ (1+d.getMonth()) +'-'+ d.getFullYear() + '</span>', // fallback value
+  			  }
+  			}
     		})
     		.toFile('./tmp/' + fileName , (error, response) => {
       			if (error) {
         			reject(error);
       			} else {
       				resolve( getBase64String(response.filename) );
-      				//fs.unlink(response.filename);
+      				fs.unlink(response.filename);
       			}
     	});
     });
 };
-
-// const getComponentAsHTML = (component, props) => {
-//   try {
-//     return ReactDOMServer.renderToStaticMarkup(component(props));
-//   } catch (exception) {
-//     console.log(exception);
-//   }
-// };
-
-// const handler = ({ component, props, fileName }, promise) => {
-//   module = promise;
-//   const html = getComponentAsHTML(component, props);
-//   if (html && fileName) generatePDF(html, fileName);
-// };
-
-// export const generateComponentAsPDF = (options) => {
-//   return new Promise((resolve, reject) => {
-//     return handler(options, { resolve, reject });
-//   });
-// };
-
 
 
 // ------ controllers
 
 function getPDF(req,res,next){
 	let htmlTable = req.body.htmlTable; 
-	console.log(htmlTable);
 	//console.log(htmlTable);
 	generatePDF(htmlTable, 'test.pdf').then((pdf)=>{
 	//console.log(pdf);

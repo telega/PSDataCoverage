@@ -12,11 +12,15 @@ class RegionService{
 
 	 getRegion(region){
 
-		return axios.get('http://localhost:8080/region/'+region)
-			.then((response)=>{
-				return response.data.authorityList;
-			})
-			.catch((err)=>{console.log(err)})
+	 	if(region === 'All'){
+	 		return this.getAllRegions();
+	 	} else {
+			return axios.get('http://localhost:8080/region/'+region)
+				.then((response)=>{
+					return response.data.authorityList;
+				})
+				.catch((err)=>{console.log(err)})
+		}
 	}
 
 }

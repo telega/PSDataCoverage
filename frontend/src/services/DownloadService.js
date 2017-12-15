@@ -1,12 +1,10 @@
 import axios from 'axios';
-import pdf from 'html-pdf';
-import {base64ToBlob} from '../modules/base64-to-blob'
+//import pdf from 'html-pdf';
+//import {base64ToBlob} from '../modules/base64-to-blob'
 
 class DownloadService{
 
 	 getPdf(html){
-
-	 	console.log(html);
 
 		 return axios({
 		 	method: 'post',
@@ -16,8 +14,6 @@ class DownloadService{
 		 	}
 		 	})
 			.then((response)=>{
-				console.log(response)
-				console.log('type' + typeof(response.data.pdf))
 				return response.data.pdf;
 			})
 			.catch((err)=>{console.log(err)})

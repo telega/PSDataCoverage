@@ -6,19 +6,20 @@ import DownloadService from '../services/DownloadService';
 import AuthoritySelectList from './AuthoritySelectList';
 import RegionSelectButton from './RegionSelectButton';
 import AuthorityCoverageTable from './AuthorityCoverageTable';
-import pdf from 'html-pdf';
+import AuthorityCoveragePdf from './AuthorityCoveragePdf';
+//import pdf from 'html-pdf';
 import {base64ToBlob} from '../modules/base64-to-blob'
 import fileSaver from 'file-saver';
 
 const findAuthById = (id) => {
 	return (element)=>{
-		return element.id == id;
+		return element.id === id;
 	}
 }
 
 const findSegmentByHeading = (heading) => {
 	return (element)=>{
-		return element.heading == heading;
+		return element.heading === heading;
 	}
 }
 
@@ -26,6 +27,24 @@ const filterById = (id)=>{
 	return(elem) =>{
   		return elem.id !== id;
   }
+}
+
+class SavePdfButton extends Component{
+	render(){
+		if( (this.props.dataSetList instanceof Array) && (this.props.dataSetList.length > 0) ){
+			return(
+				<div className = 'row'>
+						<div className = 'col-md-11'></div>
+						<div className = 'col-md-1'>
+							<button className = 'btn btn-primary' onClick = {this.props.savePDF} ><span className="fa fa-download"></span> PDF</button>
+						</div>
+				</div>
+			)
+		} else {
+			return null;
+		}
+	}	
+
 }
 
 class ContentSegmentButton extends Component {
@@ -42,15 +61,13 @@ class ContentSegmentButton extends Component {
 	}
 }
 
-
 class SelectedAuthority extends Component{
 	render(){
 		return(
-			<button onClick = {() => this.props.clicked(this.props.authority) } className = 'btn btn-danger ml-1 mb-1'>{this.props.authority.shortName}</button>
+			<button onClick = {() => this.props.clicked(this.props.authority) } className = 'btn btn-danger ml-1 mb-1'><span className="fa fa-times"></span> {this.props.authority.shortName}</button>
 		)
 	}
 }
-
 
 class DataCoverageWidget extends Component{
 	
@@ -60,6 +77,7 @@ class DataCoverageWidget extends Component{
 		this.state = {
 			authorityList: '',
 			dataSetList: '',
+			selectedRegion: 'All',
 			selectedAuthorities: [], 
 			selectedContentSegments : [ 
 				{ heading: 'Biblio', 	 	active: true  },
@@ -93,7 +111,10 @@ class DataCoverageWidget extends Component{
 		let rs = new RegionService();
 		rs.getRegion(region)
 			.then((authorityList)=>{
-				this.setState({authorityList: authorityList});
+				this.setState({
+					authorityList: authorityList,
+					selectedRegion: region
+				});
 			})
 	}
 
@@ -132,7 +153,7 @@ class DataCoverageWidget extends Component{
 	regionList(){
 		return this.props.regionList.map((region,i)=>{
 			return(
-				<RegionSelectButton key={i} regionName={region} getAuthority = {this.getRegionAuthorities}/>
+				<RegionSelectButton key={i} selectedRegion = {this.state.selectedRegion} regionName={region} getAuthority = {this.getRegionAuthorities}/>
 				)
 		})
 	}
@@ -157,9 +178,9 @@ class DataCoverageWidget extends Component{
 
 		// let selectedAuthority = this.state.dataSetList.map((d)=>{return d.shortName;})
 
-		if(this.state.selectedAuthorities.length == 0){
+		if(this.state.selectedAuthorities.length === 0){
 			return (
-				<div className="text-secondary"> No selection </div>
+					<div className="text-secondary"> No Authority Selected </div>
 				)
 
 		} else {
@@ -172,10 +193,9 @@ class DataCoverageWidget extends Component{
 		}
 	}
 
-
 	savePDF(){
 		let ds = new DownloadService();
-		let x = ReactDOMServer.renderToStaticMarkup(<AuthorityCoverageTable dataSetList={this.state.dataSetList} selectedContentSegments ={this.state.selectedContentSegments} />);
+		let x = ReactDOMServer.renderToStaticMarkup(<AuthorityCoveragePdf dataSetList={this.state.dataSetList} selectedContentSegments ={this.state.selectedContentSegments} />);
 		
 		ds.getPdf(x).then((response)=>{
 
@@ -189,13 +209,12 @@ class DataCoverageWidget extends Component{
 		return(
 			<div>
 				<div className = "row">
-					<div className="col-md-8 mb-2">
-						<h3>Select Region</h3>
-						<button className="btn btn-primary mt-1 mr-1" onClick = {this.getAllAuthorities}>All</button>
+					<div className="col-md-7 mb-2">
+						<h3><span className="fa fa-globe"></span> Select Region</h3>
 						{this.regionList()}
 					</div>
-					<div className = "col-md-4 mb-2">
-						<h4> Select Content Segments</h4>
+					<div className = "col-md-5 mb-2">
+						<h3><span className="fa fa-table"></span> Select Content Segments</h3>
 						{this.contentSegmentList()}
 					</div>
 				</div>
@@ -203,19 +222,15 @@ class DataCoverageWidget extends Component{
 					<div className = 'col-md-3'>
 						<h4>Current Selection</h4>
 						{this.currentSelection()}
-						<h3>Select Authorities</h3>
+						<h4>Select Authorities</h4>
 						<AuthoritySelectList listClicked = {this.addAuthorityToSelected} authorityList={this.state.authorityList} />
 					</div>
 					<div className = 'col-md-9'>
 						<AuthorityCoverageTable dataSetList={this.state.dataSetList} selectedContentSegments ={this.state.selectedContentSegments} />
+						<SavePdfButton savePDF = {this.savePDF} dataSetList = {this.state.dataSetList} />
 					</div>
 				</div>
-				<div className = 'row'>
-					<div class = 'col-md-11'></div>
-					<div class = 'col-md-1'>
-						<button className = 'btn btn-primary' onClick = {this.savePDF} >pdf</button>
-					</div>
-				</div>
+				
 			</div>
 			)
 	}
@@ -223,17 +238,18 @@ class DataCoverageWidget extends Component{
 
 DataCoverageWidget.defaultProps = {
 	regionList: [
-				'Africa',
-				//'Antarctica', 
-				'Asia', 
-				'Caribbean', 
-				'Europe', 
-				'Middle East', 
-				'North America',
-				'Oceania', 
-				'Other', 
-				'South America' 
-				],
+		'All',
+		'Africa',
+		//'Antarctica', 
+		'Asia', 
+		'Caribbean', 
+		'Europe', 
+		'Middle East', 
+		'North America',
+		'Oceania', 
+		'Other', 
+		'South America' 
+	],
 	contentSegmentList: [
 		'Biblio', 	 
 		'Abstract', 	 
