@@ -51,11 +51,11 @@ class ContentSegmentButton extends Component {
 	render(){
 		if( this.props.active ){
 		return(
-			<button onClick = {() => this.props.clicked(this.props.heading)} className = 'btn btn-primary ml-1 mb-1 active'>{this.props.heading}</button>
+			<button onClick = {() => this.props.clicked(this.props.heading)} className = 'btn btn-sm btn-primary ml-1 mb-1 active'>{this.props.heading}</button>
 			)
 		} else {
 			return(
-				<button onClick = {() => this.props.clicked(this.props.heading)} className = 'btn btn-primary ml-1 mb-1 '>{this.props.heading}</button>
+				<button onClick = {() => this.props.clicked(this.props.heading)} className = 'btn btn-sm btn-primary ml-1 mb-1 '>{this.props.heading}</button>
 			)
 		} 
 	}
@@ -209,14 +209,11 @@ class DataCoverageWidget extends Component{
 		return(
 			<div>
 				<div className = "row">
-					<div className="col-md-7 mb-2">
+					<div className="col-md-12 mb-2">
 						<h3><span className="fa fa-globe"></span> Select Region</h3>
 						{this.regionList()}
 					</div>
-					<div className = "col-md-5 mb-2">
-						<h3><span className="fa fa-table"></span> Select Content Segments</h3>
-						{this.contentSegmentList()}
-					</div>
+					
 				</div>
 				<div className = "row">
 					<div className = 'col-md-3'>
@@ -226,6 +223,10 @@ class DataCoverageWidget extends Component{
 						<AuthoritySelectList listClicked = {this.addAuthorityToSelected} authorityList={this.state.authorityList} />
 					</div>
 					<div className = 'col-md-9'>
+					<div className = "col-md-12 mb-2">
+						<h5><span className="fa fa-table"></span> Select Content Segments</h5>
+						{this.contentSegmentList()}
+					</div>
 						<AuthorityCoverageTable dataSetList={this.state.dataSetList} selectedContentSegments ={this.state.selectedContentSegments} />
 						<SavePdfButton savePDF = {this.savePDF} dataSetList = {this.state.dataSetList} />
 					</div>
