@@ -69,6 +69,20 @@ class SelectedAuthority extends Component{
 	}
 }
 
+class ShowGoodCoverageYearButton extends Component{
+	render(){
+		if( this.props.active ){
+		return(
+				<button onClick = {() => this.props.clicked() }  className = 'btn btn-sm btn-primary ml-1 mb-1 active'>Hide Good Coverage</button>
+			)
+		} else {
+			return(
+				<button onClick = {() => this.props.clicked() }  className = 'btn btn-sm btn-primary ml-1 mb-1 '>Show Good Coverage</button>
+			)
+		} 
+	}
+}
+
 class DataCoverageWidget extends Component{
 	
 	constructor(props){
@@ -78,7 +92,8 @@ class DataCoverageWidget extends Component{
 			authorityList: '',
 			dataSetList: '',
 			selectedRegion: 'All',
-			selectedAuthorities: [], 
+			selectedAuthorities: [],
+			showGoodCoverageYear: true, 
 			selectedContentSegments : [ 
 				{ heading: 'Biblio', 	 	active: true  },
 				{ heading: 'Abstract', 	 	active: true  },
@@ -101,6 +116,7 @@ class DataCoverageWidget extends Component{
 		this.removeAuthorityFromSelected = this.removeAuthorityFromSelected.bind(this);
 		this.currentSelection = this.currentSelection.bind(this);
 		this.toggleSelectedContentSegment = this.toggleSelectedContentSegment.bind(this);
+		this.toggleShowGoodCoverageYear = this.toggleShowGoodCoverageYear.bind(this);
 	}
 
 	componentDidMount(){
@@ -165,6 +181,10 @@ class DataCoverageWidget extends Component{
 		this.setState({selectedContentSegments: newSelectedContentSegments});
 	}
 
+	toggleShowGoodCoverageYear(){
+		this.setState({showGoodCoverageYear: !this.state.showGoodCoverageYear});
+	}
+
 	contentSegmentList(){
 		return this.props.contentSegmentList.map( (contentSegment, i)=>{
 			let segment = this.state.selectedContentSegments.find(findSegmentByHeading(contentSegment));
@@ -195,7 +215,7 @@ class DataCoverageWidget extends Component{
 
 	savePDF(){
 		let ds = new DownloadService();
-		let x = ReactDOMServer.renderToStaticMarkup(<AuthorityCoveragePdf dataSetList={this.state.dataSetList} selectedContentSegments ={this.state.selectedContentSegments} />);
+		let x = ReactDOMServer.renderToStaticMarkup(<AuthorityCoveragePdf dataSetList={this.state.dataSetList} selectedContentSegments ={this.state.selectedContentSegments} showGoodCoverageYear = {this.props.showGoodCoverageYear} />);
 		
 		ds.getPdf(x).then((response)=>{
 
@@ -221,13 +241,16 @@ class DataCoverageWidget extends Component{
 						{this.currentSelection()}
 						<h4>Select Authorities</h4>
 						<AuthoritySelectList listClicked = {this.addAuthorityToSelected} authorityList={this.state.authorityList} />
+					
 					</div>
 					<div className = 'col-md-9'>
 					<div className = "col-md-12 mb-2">
 						<h5><span className="fa fa-table"></span> Select Content Segments</h5>
 						{this.contentSegmentList()}
+						<h5>Options</h5>
+						<ShowGoodCoverageYearButton active = {this.state.showGoodCoverageYear} clicked = {this.toggleShowGoodCoverageYear} />
 					</div>
-						<AuthorityCoverageTable dataSetList={this.state.dataSetList} selectedContentSegments ={this.state.selectedContentSegments} />
+						<AuthorityCoverageTable dataSetList={this.state.dataSetList} selectedContentSegments ={this.state.selectedContentSegments} showGoodCoverageYear = {this.state.showGoodCoverageYear} />
 						<SavePdfButton savePDF = {this.savePDF} dataSetList = {this.state.dataSetList} />
 					</div>
 				</div>

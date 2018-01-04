@@ -52,23 +52,32 @@ class AuthorityCoverageRow extends Component{
 			
 			//}
 	
-			if( goodCoverage ){
+			if(this.props.showGoodCoverageYear){
+				if( goodCoverage ){
+					return(
+						<td><div>
+					 		{coverageStartString}<hr />
+					 	<div >{goodCoverageStartString}</div>
+						</div></td>
+					)
+				} else {
+						return(
+						<td><div>
+					 		{coverageStartString}<hr />
+					 		<div className = 'text-danger'>{goodCoverageStartString}</div>
+						</div>
+						</td>
+					)
+		
+				}
+			} else {
 				return(
 					<td><div>
-				 		{coverageStartString}<hr />
-				 	<div >{goodCoverageStartString}</div>
+						{coverageStartString}
 					</div></td>
-				)
-			} else {
-					return(
-					<td><div>
-				 		{coverageStartString}<hr />
-				 		<div className = 'text-danger'>{goodCoverageStartString}</div>
-					</div>
-					</td>
-				)
-	
+					)
 			}
+
 		} else {
 			return null;
 		}
@@ -79,7 +88,7 @@ class AuthorityCoverageRow extends Component{
 		return(
 			<tr>
 				<td>
- 					{this.props.shortName} <br/> ( {this.props.countryCode} )
+ 					{this.props.shortName}<br/>( {this.props.countryCode} )
 				</td>
 				<td>
 					{this.props.dataSet.dataSetType}

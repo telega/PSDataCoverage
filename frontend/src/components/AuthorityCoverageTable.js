@@ -22,7 +22,7 @@ class AuthorityCoverageTable extends Component{
 				return dataSetList.dataSets.map((dataSet, i)=>{
 
 				return (
-					<AuthorityCoverageRow key = {i} selectedSegmentList = {this.props.selectedContentSegments} shortName = {dataSetList.shortName} countryCode = {dataSetList.countryCode} dataSet = {dataSetList.dataSets[i]} />
+					<AuthorityCoverageRow key = {i} selectedSegmentList = {this.props.selectedContentSegments} shortName = {dataSetList.shortName} countryCode = {dataSetList.countryCode} dataSet = {dataSetList.dataSets[i]} showGoodCoverageYear = {this.props.showGoodCoverageYear}/>
 					);
 				});
 			});
@@ -45,7 +45,7 @@ class AuthorityCoverageTable extends Component{
 	render(){
 		if( (this.props.dataSetList instanceof Array) && (this.props.dataSetList.length > 0) ){
 			return(
-				
+				<div className ="table-container">
 				<table className="table table-striped">
 					<thead className = "thead-default">
 						<tr>
@@ -60,6 +60,7 @@ class AuthorityCoverageTable extends Component{
 						{this.tableRow()}
 					</tbody>
 				</table>
+				</div>
 			)
 		} else {
 			return null;

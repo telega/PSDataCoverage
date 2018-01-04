@@ -23,7 +23,7 @@ class AuthorityCoveragePdf extends Component{
 				return dataSetList.dataSets.map((dataSet, i)=>{
 
 				return (
-					<AuthorityCoverageRow key = {i} selectedSegmentList = {this.props.selectedContentSegments} shortName = {dataSetList.shortName} countryCode = {dataSetList.countryCode} dataSet = {dataSetList.dataSets[i]} />
+					<AuthorityCoverageRow key = {i} selectedSegmentList = {this.props.selectedContentSegments} shortName = {dataSetList.shortName} countryCode = {dataSetList.countryCode} dataSet = {dataSetList.dataSets[i]} showGoodCoverageYear = {this.props.showGoodCoverageYear} />
 					);
 				});
 			});
