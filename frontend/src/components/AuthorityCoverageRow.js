@@ -55,16 +55,16 @@ class AuthorityCoverageRow extends Component{
 			if(this.props.showGoodCoverageYear){
 				if( goodCoverage ){
 					return(
-						<td><div>
+						<td className="no-break"><div className="no-break">
 					 		{coverageStartString}<hr />
-					 	<div >{goodCoverageStartString}</div>
+					 	<div className="no-break">{goodCoverageStartString}</div>
 						</div></td>
 					)
 				} else {
 						return(
-						<td><div>
+						<td className="no-break"><div className='no-break'>
 					 		{coverageStartString}<hr />
-					 		<div className = 'text-danger'>{goodCoverageStartString}</div>
+					 		<div className = 'text-danger no-break'>{goodCoverageStartString}</div>
 						</div>
 						</td>
 					)
@@ -72,7 +72,7 @@ class AuthorityCoverageRow extends Component{
 				}
 			} else {
 				return(
-					<td><div>
+					<td className="no-break" ><div className="no-break">
 						{coverageStartString}
 					</div></td>
 					)
@@ -88,13 +88,13 @@ class AuthorityCoverageRow extends Component{
 		return(
 			<tr>
 				<td>
- 					{this.props.shortName}<br/>( {this.props.countryCode} )
+ 					<div className="no-break">{this.props.shortName}<br/>( {this.props.countryCode} ) </div>
 				</td>
 				<td>
-					{this.props.dataSet.dataSetType}
+					<div className="no-break">{this.props.dataSet.dataSetType}</div>
 				</td>
 				<td>
-					{this.props.dataSet.pubType}
+					<div className="no-break">{this.props.dataSet.pubType}</div>
 				</td>
 				
 					{this.getSegment('Biblio')}

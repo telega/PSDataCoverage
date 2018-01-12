@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import AuthorityCoverageRow from './AuthorityCoverageRow'
 import InlineCss from 'react-inline-css';
-import logo from '../logo.svg';
+//import logo from '../logo.svg';
 
 class TableHeading extends Component {
 	render(){
@@ -13,41 +13,41 @@ class TableHeading extends Component {
 
 class AuthorityCoveragePdf extends Component{
 	
-	// constructor(props){
-	// 	super(props);
-	// }
 
-	tableRow(){
-		if(this.props.dataSetList instanceof Array){
-			return this.props.dataSetList.map((dataSetList, i)=>{
-				return dataSetList.dataSets.map((dataSet, i)=>{
+	tables(){
 
-				return (
-					<AuthorityCoverageRow key = {i} selectedSegmentList = {this.props.selectedContentSegments} shortName = {dataSetList.shortName} countryCode = {dataSetList.countryCode} dataSet = {dataSetList.dataSets[i]} showGoodCoverageYear = {this.props.showGoodCoverageYear} />
-					);
-				});
-			});
-		}
-	}
+			let dataSetList = this.props.dataSetList;
 
+			let newDataSetList = []	;  
 
-	tableHeadings(){
-			return this.props.selectedContentSegments.map((contentSegment, i)=>{
-				if(contentSegment.active === false){
-					return null;
-				} else {
-					return (
-						<TableHeading key = {i} heading = {contentSegment.heading} />
-					)
-				}
-			});
-	}
+			for(var key in dataSetList){
+				let shortName = dataSetList[key].shortName;
+				let countryCode = dataSetList[key].countryCode;
 
+				dataSetList[key].dataSets.forEach((ds)=>{
+					ds.shortName = shortName;
+					ds.countryCode = countryCode;
+					newDataSetList.push(ds);
+				})
+			}
 
-	render(){
-		if( (this.props.dataSetList instanceof Array) && (this.props.dataSetList.length > 0) ){
+			let dataSetArray = [];
+
+			let rowSize = 5;
+			if(this.props.showGoodCoverageYear === false ){
+				rowSize = 8;
+			}
+
+			for(var i = 0; i < newDataSetList.length; i += rowSize){
+				dataSetArray.push (newDataSetList.slice(i,i+rowSize) );
+			}
+
 			return(
-				<InlineCss stylesheet={`
+
+				dataSetArray.map((dataSet,i)=>{
+					return(
+
+						<InlineCss key={i} stylesheet={`
 
 				& hr {
 				    margin-top: 1rem;
@@ -57,11 +57,19 @@ class AuthorityCoveragePdf extends Component{
 				}
 
 				& table {
-				    border-collapse: collapse
+				    border-collapse: collapse;
 				}
 				
 				& th {
-				    text-align: left
+				    text-align: left;
+				}
+
+				& tr {
+    				page-break-inside: avoid !important;
+				}
+
+				& .no-break{
+					page-break-inside: avoid !important;
 				}
 				
 				& .table {
@@ -77,6 +85,7 @@ class AuthorityCoveragePdf extends Component{
 				 .table td {
 				    padding: .75rem;
 				    border-top: 1px solid #e9ecef;
+				    page-break-inside:avoid !important;
 				}
 				
 				& .table thead th {
@@ -171,24 +180,106 @@ class AuthorityCoveragePdf extends Component{
 				    margin-bottom:10px;
 				}
 
+				& .break-before{
+					page-break-before:always;
+				}
+
 				`}>
-				<div><img src="logo.svg" className="table-logo"/></div>
-				<table className="table table-striped">
-					<thead className = "thead-default">
-						<tr>
-							<th>Authority</th>
-							<th>Data Set</th>
-							<th>PubType</th>
-							{this.tableHeadings()}
-	
-						</tr>
-					</thead>
-					<tbody>
-						{this.tableRow()}
-					</tbody>
-				</table>
-				</InlineCss> 	
+				
+				
+						{this.table(dataSet,i)}
+
+				</InlineCss>
+
+						)
+				})
 			)
+
+
+	}
+
+
+	table(dataSetArray,i){
+		if(i === 0){
+			return(
+				<div>
+				<div><img alt="logo" src="logo.svg" className="table-logo"/></div>
+				<table className="table table-striped">
+						<thead className = "thead-default">
+							<tr>
+								{this.initialTableHeadings()}
+								{this.tableHeadings()}
+							</tr>
+						</thead>
+						<tbody>
+							{this.tableRow(dataSetArray)}
+						</tbody>
+				</table>
+				</div>
+			)
+		} else {
+			return(
+				<div className = "break-before">
+				<div><img alt="logo" src="logo.svg" className="table-logo"/></div>
+				<table className="table table-striped">
+						<thead className = "thead-default">
+							<tr>
+								{this.initialTableHeadings()}
+								{this.tableHeadings()}
+							</tr>
+						</thead>
+						<tbody>
+							{this.tableRow(dataSetArray)}
+						</tbody>
+				</table>
+				</div>
+			)
+		}
+	}
+
+
+	tableRow(dataSet){
+		if(dataSet instanceof Array){
+
+			return dataSet.map((dataSetItem, i)=>{
+				return (
+					<AuthorityCoverageRow key = {i} selectedSegmentList = {this.props.selectedContentSegments} shortName = {dataSetItem.shortName} 
+					countryCode = {dataSetItem.countryCode} dataSet = {dataSetItem} showGoodCoverageYear = {this.props.showGoodCoverageYear} />
+					)
+				});
+		}
+	}
+
+
+	initialTableHeadings(){
+			return ['Authority', 'Data Set', 'PubType'].map((heading, i)=>{
+				return (
+						<TableHeading key = {i} heading = {heading} />
+				)
+				
+			});
+	}
+
+	tableHeadings(){
+			return this.props.selectedContentSegments.map((contentSegment, i)=>{
+				if(contentSegment.active === false){
+					return null;
+				} else {
+					return (
+						<TableHeading key = {i} heading = {contentSegment.heading} />
+					)
+				}
+			});
+	}
+
+
+	render(){
+		if( (this.props.dataSetList instanceof Array) && (this.props.dataSetList.length > 0) ){
+			return( 
+				<div>
+					{this.tables()}
+				</div>
+			 )
 		} else {
 			return null;
 		}

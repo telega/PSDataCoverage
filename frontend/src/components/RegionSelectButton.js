@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 class RegionSelectButton extends Component{
 
 	render(){
-		if(this.props.selectedRegion == this.props.regionName){
+		if(this.props.selectedRegion === this.props.regionName){
 
 
 			return(

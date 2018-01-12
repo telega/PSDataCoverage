@@ -18,7 +18,7 @@ class App extends Component {
         
          <footer>
           <div className = "row bg-dark mt-5 pt-4 footer">
-            <div className = "col-md-12 text-light">Feedback: <a href="mailto:tallen@patsnap.com">tallen@patsnap.com</a></div>
+            <div className = "col-md-12 text-light">Feedback: <a href="mailto:hvikram@patsnap.com">hvikram@patsnap.com</a></div>
           </div>
           </footer>
       </div>

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import AuthorityCoverageRow from './AuthorityCoverageRow'
-import logo from '../logo.svg';
+//import logo from '../logo.svg';
 
 class TableHeading extends Component {
 	render(){
@@ -29,6 +29,15 @@ class AuthorityCoverageTable extends Component{
 		}
 	}
 
+	initialTableHeadings(){
+			return ['Authority', 'Data Set', 'PubType'].map((heading, i)=>{
+				return (
+						<TableHeading key = {i} heading = {heading} />
+				)
+				
+			});
+	}
+
 
 	tableHeadings(){
 			return this.props.selectedContentSegments.map((contentSegment, i)=>{
@@ -49,11 +58,8 @@ class AuthorityCoverageTable extends Component{
 				<table className="table table-striped">
 					<thead className = "thead-default">
 						<tr>
-							<th>Authority</th>
-							<th>Data Set</th>
-							<th>PubType</th>
+							{this.initialTableHeadings()}
 							{this.tableHeadings()}
-	
 						</tr>
 					</thead>
 					<tbody>

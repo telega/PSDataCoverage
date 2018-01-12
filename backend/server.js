@@ -55,8 +55,14 @@ const generatePDF = (html, fileName) =>{
       		"header": {
   			  "height": "8mm",
   			  "contents": {
-  			    first: '<span style="color: #444; font-size:8px; font-family: sans-serif;"> Data Coverage | Generated on '+d.getDate()+'-'+ (1+d.getMonth()) +'-'+ d.getFullYear() + '</span>', // fallback value
+  			    default: '<span style="color: #444; font-size:8px; font-family: Arial, sans-serif;"> Data Coverage | Generated on '+d.getDate()+'-'+ (1+d.getMonth()) +'-'+ d.getFullYear() + '</span>', // fallback value
   			  }
+  			},
+  			"footer": {
+    			"height": "8mm",
+    			"contents": {
+    			  default: '<span style="color: #444; font-size:8px; font-family: Arial, sans-serif;">{{page}}</span>', 
+    			}
   			}
     		})
     		.toFile('./tmp/' + fileName , (error, response) => {
@@ -76,7 +82,7 @@ const generatePDF = (html, fileName) =>{
 function getPDF(req,res,next){
 	let htmlTable = req.body.htmlTable; 
 	//console.log(htmlTable);
-	generatePDF(htmlTable, 'test.pdf').then((pdf)=>{
+	generatePDF(htmlTable, 'coverage.pdf').then((pdf)=>{
 	//console.log(pdf);
 	res.send(200,{pdf});
 	//res.send(200,pdf);

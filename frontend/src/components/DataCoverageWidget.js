@@ -215,17 +215,18 @@ class DataCoverageWidget extends Component{
 
 	savePDF(){
 		let ds = new DownloadService();
-		let x = ReactDOMServer.renderToStaticMarkup(<AuthorityCoveragePdf dataSetList={this.state.dataSetList} selectedContentSegments ={this.state.selectedContentSegments} showGoodCoverageYear = {this.props.showGoodCoverageYear} />);
+		let x = ReactDOMServer.renderToStaticMarkup(<AuthorityCoveragePdf dataSetList={this.state.dataSetList} selectedContentSegments ={this.state.selectedContentSegments} showGoodCoverageYear = {this.state.showGoodCoverageYear} />);
 		
 		ds.getPdf(x).then((response)=>{
 
 			let pdfBlob = base64ToBlob(response);
-			fileSaver.saveAs(pdfBlob,'test.pdf');
+			fileSaver.saveAs(pdfBlob,'coverage.pdf');
 		});
 		
 	}
 
 	render(){
+
 		return(
 			<div>
 				<div className = "row">
@@ -252,6 +253,7 @@ class DataCoverageWidget extends Component{
 					</div>
 						<AuthorityCoverageTable dataSetList={this.state.dataSetList} selectedContentSegments ={this.state.selectedContentSegments} showGoodCoverageYear = {this.state.showGoodCoverageYear} />
 						<SavePdfButton savePDF = {this.savePDF} dataSetList = {this.state.dataSetList} />
+
 					</div>
 				</div>
 				
